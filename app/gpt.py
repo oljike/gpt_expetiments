@@ -3,25 +3,26 @@ openai.api_key = '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'
 
 
 class GPT(object):
-    def __init__(self):
+    COMPLETIONS_MODEL = "text-davinci-003"
+    EMBEDDING_MODEL = "text-embedding-ada-002"
 
-        self.COMPLETIONS_MODEL = "text-davinci-003"
-        self.EMBEDDING_MODEL = "text-embedding-ada-002"
-
-
-
-    def get_answer(self, prompt, numQuestionQuery):
+    def get_answer(self, prompt: str,
+                   numQuestionQuery: int,
+                   numAnswerOptions: int,
+                   questionDifficulty: str):
 
         if prompt is None or prompt=='':
             return "Input some text, please!"
 
-        if numQuestionQuery.isdigit():
-            numQuestionQuery = int(numQuestionQuery)
-        else:
-            numQuestionQuery = 4
-
-        init_prompt = "As an advanced chatbot, your primary goal is to write {} difficult questions " \
-                           "to the given text and 4 answer options in each and no correct options.\n\n".format(numQuestionQuery)
+        init_prompt = (
+            f"""
+            As an advanced chatbot, your primary goal is to write {numQuestionQuery} 
+            questions with {questionDifficulty} difficulty 
+            to the given text and {numAnswerOptions} answer options 
+            in each and one of them is correct. Make sure that answers options written in alphavital order. 
+            Add correct answer in the end of each section. Also, don't include order of answer between questions.\n\n
+        """
+        )
 
         return openai.Completion.create(
             prompt = init_prompt + prompt,
